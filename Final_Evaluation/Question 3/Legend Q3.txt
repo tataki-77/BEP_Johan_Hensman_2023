@@ -1,0 +1,260 @@
+// All columns of dataset and dataset2 are explained in this document. They are in order of the document with the explanation starting with the column name and the question that belonged to the column. Whenever additional comments are made, they are prefaced with *//*.
+
+Legend for the columns dataset and dataset2:
+
+//The initial questions are the same for both datasets, so will be explained once: 
+
+Finished - column stating whether the participant finished the study successfully
+
+Consent1_1 - I have read and understood the study information. I have been able to ask questions about the study and my questions have been answered to my satisfaction.
+Consent1_2 - I understand that this study is only for people who are fluent in English and in German.
+Consent1_3 - I consent voluntarily to be a participant in this study and understand that I can refuse to answer questions and withdraw from participation at any point during the study.
+Consent1_4 - I understand that the study ends 7 days after I submit the questionnaire or 7 days after I started it, whichever is earlier. Once the study ends, I can no longer withdraw from the study because the data will then be anonymized.
+Consent1_5 - I understand that taking part in the study involves completing a questionnaire on the interaction between an artificial social agent and a human user, which is displayed in a short video.
+Consent1_6 - I understand that the questionnaire is hosted on the online survey platform Qualtrics.
+Consent1_7 - I understand that I may only be reimbursed for the study if I complete it within the requested timeframe and with passed check questions.
+Consent1_8 - I understand that taking part in the study involves the risk of possible data leakage. The researcher does everything to mitigate this risk by storing the data in an anonymized format on a secure server.
+Consent1_9 - I understand that the information retrieved during participating in this study will be used for research and can be published in a scientific paper.
+Consent1_10 - I understand that the information retrieved from my Prolific profile (e.g., gender, age) will be used for research and can be published in a scientific paper.
+Consent1_11 - I understand that personally identifiable information collected (e.g., Prolific ID) will not be shared beyond the study team and destroyed once the data is anonymized.
+Consent1_12 - I give permission to the researcher to publish the collected data in an anonymized form so that it can be used in the future.
+Consent1_13 - I understand that the anonymized data can be publicly accessible for everybody and for all purposes. This includes, for example, educational, research and commercial purposes.
+Consent1_14 - I understand that the data I provide may be collected and used by the online crowdsourcing platform as per its privacy agreement.
+Consent1_15  - I agree to participate in this study.
+
+VID_CHECK_Q - Is the video above playing?
+vid_check_AC - What is displayed in the video?
+
+//Attention checks and items from 1st dataset. 
+//Note the items of the questionnaire have 2 column names as they got renamed in the code.
+
+AC_English_1 - [Field-agentName] is singing, however, to show that you pay attention, select disagree
+AC_English_2 - The user can see [Field-agentName], however, please as attention check select agree
+AC_English_3 - [Field-agentName] speaks English, however, this is an attention check so please select agree
+AC_English_4 - The user runs toward [Field-agentName], but to show you pay attention please select disagree
+AC_English_5 - [Field-agentName] can walk or not, however, select the middle option labeled with the number zero to indicate that you are not sleeping
+AC_English_6 - You’ve seen [Field-agentName]. However, to show that you have watched the video please select agree
+AC_English_7 - [Field-agentName]’s body colour is black. Please ignore the previous statement and select disagree
+
+HLA1/Q_ITEMS_307 - [Field-agentName]'s appearance is human
+HLA2/Q_ITEMS_308 - [Field-agentName] has the appearance of a human
+HLA3/Q_ITEMS_309 - [Field-agentName] has a human-like outside
+HLA4/Q_ITEMS_310 - [Field-agentName]'s appearance makes me think of a human
+HLB1/Q_ITEMS_312 - A human would behave like [Field-agentName]
+HLB2/Q_ITEMS_313 - [Field-agentName]'s manners is consistent with that of people
+HLB3/Q_ITEMS_314 - [Field-agentName]'s behavior makes me think of human behavior
+HLB4/Q_ITEMS_315 - [Field-agentName] behaves like a real person
+HLB5/Q_ITEMS_316 - [Field-agentName] has a human-like manner
+NA1/Q_ITEMS_317 - [Field-agentName] appears like something that could exist in nature
+NA2/Q_ITEMS_318 - [Field-agentName] has a natural physique
+NA3/Q_ITEMS_319 - [Field-agentName]'s resemblance has an organic origin
+NA4/Q_ITEMS_320 - [Field-agentName] seems natural from the outward appearance
+NA5/Q_ITEMS_321 - How [Field-agentName] is represented is realistic
+NB1/Q_ITEMS_322 - [Field-agentName] is alive
+NB2/Q_ITEMS_323 - [Field-agentName] acts naturally
+NB3/Q_ITEMS_324 - [Field-agentName] reacts like a living organism
+AAS1/Q_ITEMS_327 - [Field-agentName]'s appearance is appropriate
+AAS2/Q_ITEMS_328 - [Field-agentName]'s physique is suitable for its role
+AAS3/Q_ITEMS_331 - [Field-agentName]'s appearance was suitable
+AU1/Q_ITEMS_332 - [Field-agentName] is easy to use
+AU2/Q_ITEMS_333 - Learning to work with [Field-agentName] is easy
+AU3/Q_ITEMS_334 - Learning how to communicate with [Field-agentName] is quick
+PF1/Q_ITEMS_338 - [Field-agentName] does its task well
+PF2/Q_ITEMS_341 - [Field-agentName] does not hinder the user
+PF3/Q_ITEMS_344 - The user is capable of succeeding with [Field-agentName]
+AL1/Q_ITEMS_347 - [Field-agentName]'s appearance is pleasing
+AL2/Q_ITEMS_348 - I like [Field-agentName]
+R_AL3/Q_ITEMS_349 - I dislike [Field-agentName]
+AL4/Q_ITEMS_350 - [Field-agentName] is cooperative
+AL5/Q_ITEMS_351 - I want to hang out with [Field-agentName]
+AS1/Q_ITEMS_353 - [Field-agentName] can easily mix socially
+AS2/Q_ITEMS_354 - It is easy to mingle with [Field-agentName]
+AS3/Q_ITEMS_355 - [Field-agentName] interacts socially with the user
+APP1/Q_ITEMS_357 - [Field-agentName] has a distinctive character
+R_APP2/Q_ITEMS_358 - [Field-agentName] is characterless
+APP3/Q_ITEMS_361 - [Field-agentName] is an individual
+UAA1/Q_ITEMS_362 - The user will use [Field-agentName] again in future
+UAA2/Q_ITEMS_363 - The user can see themselves using [Field-agentName] in the future
+R_UAA3/Q_ITEMS_365 - The user opposes further interaction with [Field-agentName]
+R_AE1/Q_ITEMS_367 - [Field-agentName] is boring
+AE2/Q_ITEMS_368 - It is interesting to interact with [Field-agentName]
+AE3/Q_ITEMS_370 - The user enjoys interacting with [Field-agentName]
+R_AE4/Q_ITEMS_438 - [Field-agentName] is unpleasant to deal with
+
+AC_Dutch_1 - [Field-agentName] is aan het zingen, echter, om te laten zien dat je je aandacht erbij hebt, selecteer oneens
+AC_Dutch_2 - De personen kunnen [Field-agentName] zien, echter, selecteer alsjeblieft eens als aandachtstest
+AC_Dutch_3 - [Field-agentName] spreekt Engels, dit is echter een aandachtscontrole dus selecteer alstublieft eens
+AC_Dutch_4 -De personen rennen naar [Field-agentName], maar om aan te tonen dat u oplet selecteer alstublieft oneens
+AC_Dutch_5 - [Field-agentName] kan lopen of niet, echter, selecteer de middelste optie met nummer nul om aan te tonen dat u niet slaapt
+AC_Dutch_6 - Je hebt [Field-agentName] gezien. Echter, om te laten zien dat je de video gekeken hebt, selecteer eens
+AC_Dutch_7 - [Field-agentName]'s lichaamskleur is zwart. Negeer alstublieft de vorige stelling en selecteer oneens.
+
+D_HLA1/Q_ITEMS_307.0 - [Field-agentName]'s uiterlijk is menselijk
+D_HLA2/Q_ITEMS_308.0 - [Field-agentName] heeft het uiterlijk van een mens
+D_HLA3/Q_ITEMS_309.0 - [Field-agentName] heeft een menselijke buitenkant
+D_HLA4/Q_ITEMS_310.0 - [Field-agentName]'s uiterlijk doet mij denken aan een mens
+D_HLB1/Q_ITEMS_312.0 - Een mens zou zich gedragen als [Field-agentName]
+D_HLB2/Q_ITEMS_313.0 - [Field-agentName]'s manieren komen overeen met die van mensen
+D_HLB3/Q_ITEMS_314.0 - [Field-agentName]'s gedrag doet mij denken aan menselijk gedrag
+D_HLB4/Q_ITEMS_315.0 - [Field-agentName] gedraagt zich als een echt persoon
+D_HLB5/Q_ITEMS_316.0 - [Field-agentName] heeft menselijke manieren
+D_NA1/Q_ITEMS_317.0 - [Field-agentName] ziet eruit als iets dat zou kunnen bestaan in de natuur
+D_NA2/Q_ITEMS_318.0 - [Field-agentName] heeft een natuurlijk uiterlijk
+D_NA3/Q_ITEMS_319.0 - [Field-agentName]'s verschijning heeft een organische oorsprong
+D_NA4/Q_ITEMS_320.0 - [Field-agentName] lijkt natuurlijk van buitenaf
+D_NA5/Q_ITEMS_321.0 - Hoe [Field-agentName] wordt weergeven is realistisch
+D_NB1/Q_ITEMS_322.0 - [Field-agentName] leeft
+D_NB2/Q_ITEMS_323.0 - [Field-agentName] gedraagt zich natuurlijk
+D_NB3/Q_ITEMS_324.0 - [Field-agentName] reageert zoals een levend organisme
+D_AAS1/Q_ITEMS_327.0 - [Field-agentName]'s uiterlijk is geschikt
+D_AAS2/Q_ITEMS_328.0 - De lichaamsbouw van [Field-agentName] is geschikt voor zijn rol
+D_AAS3Q_ITEMS_331.0 - [Field-agentName]'s uiterlijk was passend
+D_AU1/Q_ITEMS_332.0 -  [Field-agentName] is gemakkelijk te gebruiken
+D_AU2/Q_ITEMS_333.0 - Leren werken met [Field-agentName] is makkelijk
+D_AU3/Q_ITEMS_334.0 - Leren communiceren met [Field-agentName] gaat snel
+D_PF1/Q_ITEMS_338.0 - [Field-agentName] doet zijn taak goed
+D_PF2/Q_ITEMS_341.0 - [Field-agentName] hindert de personen niet
+D_PF3/Q_ITEMS_344.0 - De personen zijn in staat om te slagen met [Field-agentName]
+D_AL1/Q_ITEMS_347.0 - [Field-agentName]'s uiterlijk is aangenaam
+D_AL2/Q_ITEMS_348.0 - Ik vind [Field-agentName] leuk
+D_R_AL3/Q_ITEMS_349.0 - Ik vind [Field-agentName] niet leuk
+D_AL4/Q_ITEMS_350.0 - [Field-agentName] is meewerkend
+D_AL5/Q_ITEMS_351.0 - Ik wil tijd doorbrengen met [Field-agentName]
+D_AS1/Q_ITEMS_353.0 - [Field-agentName] is makkelijk in de sociale omgang
+D_AS2Q_ITEMS_354.0 - [Field-agentName] is sociaal vaardig
+D_AS3/Q_ITEMS_355.0 - [Field-agentName] gaat sociaal makkelijk om met de personen
+D_APP1/Q_ITEMS_357.0 - [Field-agentName] heeft een onderscheidend karakter
+D_R_APP2/Q_ITEMS_358.0 - [Field-agentName] heeft geen karakter
+D_APP3/Q_ITEMS_361.0 - [Field-agentName] is een individu
+D_UAA1/Q_ITEMS_362.0 - De personen willen [Field-agentName] opnieuw gebruiken in de toekomst
+D_UAA2/Q_ITEMS_363.0 - De personen zien zichzelf [Field-agentName] gebruiken in de toekomst
+D_R_UAA3/Q_ITEMS_365.0 - De personen zijn tegen verdere interactie met [Field-agentName]
+D_R_AE1/Q_ITEMS_367.0 - [Field-agentName] is saai
+D_AE2/Q_ITEMS_368.0 - Het is interessant om om te gaan met [Field-agentName]
+D_AE3/Q_ITEMS_370.0 - De personen genieten van interactie met [Field-agentName]
+D_R_AE4/Q_ITEMS_438.0 - [Field-agentName] is onaangenaam om mee om te gaan
+
+
+
+//Attention checks and items from 2nd dataset. 
+//Note the items of the questionnaire have 2 column names as they got renamed in the code.
+
+AC_English_1 - Make sure you select the middle option labeled with the number zero to show you are not a bot
+AC_English_2 - Please select disagree here to show you still pay attention
+AC_English_3 - Please select agree to pass this attention check
+AC_English_4 - To show you are really reading these questions, please select the option labeled with the number two
+AC_English_5 - To indicate you are still there please select agree
+AC_English_6 - To show you are not sleeping, as attention check please select disagree
+AC_English_7 - To show you are paying attention, please select the option labeled with the number one
+
+
+UE1/Q_ITEMS_439 - The user was concentrated during the interaction with [Field-agentName]
+UE2/Q_ITEMS_374 - The interaction captured the user's attention
+UE3/Q_ITEMS_376 - The user was alert during the interaction with [Field-agentName]
+UT1/Q_ITEMS_379 - [Field-agentName] always gives good advice
+UT2/Q_ITEMS_381 - [Field-agentName] acts truthfully
+UT3/Q21_440 - The user can rely on [Field-agentName]
+UAL1/Q_ITEMS_384 - [Field-agentName] and the user have a strategic alliance
+UAL2/Q_ITEMS_385 - Collaborating with [Field-agentName] is like a joint venture
+UAL3/Q_ITEMS_386 - [Field-agentName] joins the user for mutual benefit
+UAL4/Q_ITEMS_387 - [Field-agentName] can collaborate in a productive way
+UAL5/Q_ITEMS_390 - [Field-agentName] and the user are in sync with each other
+UAL6/Q_ITEMS_391 - [Field-agentName] understands the user
+AA1/Q_ITEMS_393 - [Field-agentName] remains focused on the user throughout the interaction
+AA2/Q_ITEMS_394 - [Field-agentName] is attentive
+AA3/Q_ITEMS_395 - The user receives [Field-agentName]'s full attention throughout the interaction
+R_AC1/Q_ITEMS_398 - [Field-agentName]'s behavior does not make sense
+R_AC2/Q_ITEMS_400 - [Field-agentName]'s behavior is irrational
+R_AC3/Q_ITEMS_401 - [Field-agentName] is inconsistent
+R_AC4/Q_ITEMS_402 - [Field-agentName] appears confused
+AI1/Q_ITEMS_403 - [Field-agentName] acts intentionally
+AI2/Q_ITEMS_404 - [Field-agentName] knows what it is doing
+R_AI3/Q_ITEMS_405 - [Field-agentName] has no clue of what it is doing
+AI4/Q_ITEMS_407 - [Field-agentName] can make its own decision
+AT3/Q_ITEMS_408 - The user sees the interaction with [Field-agentName] as something positive
+AT2/Q_ITEMS_409 - The user views the interaction as something favorable
+R_AT3/Q_ITEMS_412 - The user thinks negatively of the interaction with [Field-agentName]
+SP1/Q_ITEMS_414 - [Field-agentName] has a social presence
+SP2/Q_ITEMS_415 - [Field-agentName] is a social entity
+SP3/Q_ITEMS_417 - The user has the same social presence as [Field-agentName]
+IIS1/Q_ITEMS_418 - The user's friends would recommend them to use [Field-agentName]
+IIS2/Q_ITEMS_419 - Others would encourage the user to use [Field-agentName]
+IIS3/Q_ITEMS_421 - [Field-agentName] makes the user look good
+IIS4/Q_ITEMS_422 - People would look favorably at the user because of their interaction with [Field-AgentName] 
+AEI1/Q_ITEMS_423 - [Field-agentName] is emotional
+AEI2/Q_ITEMS_424 - [Field-agentName] experiences emotions
+R_AEI3/Q_ITEMS_425 - [Field-agentName] is emotionless
+AEI4/Q_ITEMS_426 - [Field-agentName] can express its feelings
+R_AEI5/Q_ITEMS_427 - [Field-agentName] cannot experience emotions
+UEP1/Q_ITEMS_428 - [Field-agentName]'s attitudes influences how the user feels
+UEP2/Q_ITEMS_429 - The user is influenced by [Field-agentName]'s moods
+UEP3/Q_ITEMS_430 - The emotions the user feels during the interaction are caused by [Field-agentName]
+UEP4/Q_ITEMS_432 -The user's interaction with [Field-agentName] gives them an emotional sensation
+UAI1/Q_ITEMS_434 - The user's emotions influence the mood of the interaction
+UAI2/Q_ITEMS_435 - [Field-agentName] reciprocates the user's actions
+UAI3/Q_ITEMS_436 - [Field-agentName]'s and the user's behaviors are in direct response to each other's behavior
+UAI4/Q_ITEMS_437 - [Field-agentName]'s and the user's emotions change to what they do to each other
+
+
+AC_Dutch_1 - [Field-agentName] is aan het zingen, echter, om te laten zien dat je je aandacht erbij hebt, selecteer oneens
+AC_Dutch_2 - De personen kunnen [Field-agentName] zien, echter, selecteer alsjeblieft eens als aandachtstest
+AC_Dutch_3 - [Field-agentName] spreekt Engels, dit is echter een aandachtscontrole dus selecteer alstublieft eens
+AC_Dutch_4 -De personen rennen naar [Field-agentName], maar om aan te tonen dat u oplet selecteer alstublieft oneens
+AC_Dutch_5 - [Field-agentName] kan lopen of niet, echter, selecteer de middelste optie met nummer nul om aan te tonen dat u niet slaapt
+AC_Dutch_6 - Je hebt [Field-agentName] gezien. Echter, om te laten zien dat je de video gekeken hebt, selecteer eens
+AC_Dutch_7 - [Field-agentName]'s lichaamskleur is zwart. Negeer alstublieft de vorige stelling en selecteer oneens.
+
+D_UE1/Q_ITEMS_307 - De personen waren geconcentreerd tijdens de interactie met [Field-agentName]
+D_UE2/Q_ITEMS_308 - De interactie trok de aandacht van de personen
+D_UE3/Q_ITEMS_309 - De personen waren alert tijdens de interactie met [Field-agentName]
+D_UT1/Q_ITEMS_310 - [Field-agentName] geeft altijd goed advies
+D_UT2/Q_ITEMS_312 - [Field-agentName] handelt eerlijk
+D_UT3/Q_ITEMS_313 - De personen kunnen rekenen op [Field-agentName]
+D_UAL1/Q_ITEMS_314 - [Field-agentName] en de personen hebben een strategische samenwerking
+D_UAL2/Q_ITEMS_315 - Samenwerken met [Field-agentName] is zoals een gezamenlijke onderneming
+D_UAL3/Q_ITEMS_316 - [Field-agentName] werkt met de personen samen met wederzijds voordeel
+D_UAL4/Q_ITEMS_317 - [Field-agentName] kan op een productieve manier samenwerken
+D_UAL5/Q_ITEMS_318 - [Field-agentName] en de personen zijn op elkaar ingespeeld
+D_UAL6/Q_ITEMS_319 - [Field-agentName] begrijpt de personen
+D_AA1/Q_ITEMS_320 - [Field-agentName] blijft gefocust op de personen tijdens de interactie
+D_AA2/Q_ITEMS_321 - [Field-agentName]  is oplettend
+D_AA3/Q_ITEMS_322 - De personen krijgen de volledige aandacht van [Field-agentName] tijdens de interactie
+D_R_AC1/Q_ITEMS_323 - [Field-agentName]'s gedrag slaat nergens op
+D_R_AC2/Q_ITEMS_324 - [Field-agentName]'s gedrag is irrationeel
+D_R_AC3/Q_ITEMS_327 - [Field-agentName] is inconsistent
+D_R_AC4/Q_ITEMS_328 - [Field-agentName] lijkt verward
+D_AI1/Q_ITEMS_331 - [Field-agentName] gedraagt zich doelbewust
+D_AI2/Q_ITEMS_332 - [Field-agentName]} weet wat hij doet
+D_R_AI3/Q_ITEMS_333 - [Field-agentName] heeft geen idee wat hij aan het doen is
+D_AI4/Q_ITEMS_334 - [Field-agentName] kan zelf beslissingen nemen
+D_AT1/Q_ITEMS_338 - De personen zien de interactie met [Field-agentName] als iets positiefs
+D_AT2/Q_ITEMS_341 - De personen zien de interactie als iets gunstigs
+D_R_AT3/Q_ITEMS_344 - De personen denken negatief over de interactie met [Field-agentName]
+D_SP1/Q_ITEMS_347 - [Field-agentName] heeft een sociale aanwezigheid
+D_SP2/Q_ITEMS_348 - [Field-agentName] is een sociale wezen
+D_SP3/Q_ITEMS_349 - De personen hebben dezelfde sociale aanwezigheid als [Field-agentName]
+D_IIS1/Q_ITEMS_350 - De vrienden van de personen zouden hem [Field-agentName] aanbevelen om te gebruiken
+D_IIS2/Q_ITEMS_351 - Anderen zouden de personen aanmoedigen om [Field-agentName] te gebruiken
+D_IIS3/Q_ITEMS_353 - Met [Field-agentName] maken de personen een goede indruk
+D_IIS4/Q_ITEMS_354 - Mensen zouden gunstig naar de personen kijken vanwege de interactie met [Field-agentName]
+D_AEI1/Q_ITEMS_355 - [Field-agentName] is emotioneel
+D_AEI2/Q_ITEMS_357 - [Field-agentName] ervaart emoties
+D_R_AEI3/Q_ITEMS_358 - [Field-agentName] is emotieloos
+D_AEI4/Q_ITEMS_361 - [Field-agentName] kan zijn gevoelens uiten
+D_R_AEI5/Q_ITEMS_362 - [Field-agentName] kan geen emoties ervaren
+D_UEP1/Q_ITEMS_365 - [Field-agentName]'s houding beïnvloedt hoe de personen zich voelen
+D_UEP2/Q_ITEMS_367 - De personen worden beïnvloed door de stemmingen van [Field-agentName]
+D_UEP3/Q_ITEMS_368 - De emoties die de personen voelen tijdens de interactie worden veroorzaakt door [Field-agentName]
+D_UEP4/Q_ITEMS_370 - De interactie met [Field-agentName] geeft de personen een emotioneel gevoel 
+D_UAI1/Q_ITEMS_438 - De emoties van de personen beïnvloeden de stemming van de interactie
+D_UAI2/Q42_440 - [Field-agentName] doet hetzelfde als reactie op de acties van de personen
+D_UAI3/Q42_441 - [Field-agentName] en het gedrag van de personen zijn een directe reactie op elkaars gedrag
+D_UAI4/Q42_442 - [Field-agentName]'s en de emoties van de personen veranderen op basis van wat ze met elkaar doen
+
+
+//The last questions are again similar, so will be explained once:
+
+
+Num_Rewatch - How often did you re-watch the video of the interaction to refresh your memory?
+Use_Data - I have answered the survey carefully and recommend using my data for scientific purposes. I understand that answering this question will NOT affect my payment on Prolific.
+rand_id - participant's random identifier

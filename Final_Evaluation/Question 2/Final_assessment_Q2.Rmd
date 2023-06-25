@@ -1,0 +1,562 @@
+---
+title: 'Final assessment part 2: Variation between the orginal English and the newly translated Dutch ASA Questionnaire'
+author: "Johan Hensman"
+date: "21 June, 2023"
+output:
+  pdf_document:
+    includes:
+      in_header: header.tex
+    latex_engine: xelatex
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Introduction
+
+This document presents statistical analyses of variation between English and Dutch ASA questionnaires for item level, construct/dimension level, and short versions of the ASA questionnaire as reported in the paper. 
+Code based on Fengxiang Li with adaptations made to Dutch.
+
+
+
+We use the following packages:
+
+```{r, collapse=TRUE, results='hide', message=FALSE, warning=FALSE}
+library(foreign) # Open various data files
+library(nlme)    # Run multilevel linear models
+library(car)     # Package linear regression
+library(haven) # Use read_sav fuction
+library(BayesianFirstAid) 
+library(dplyr) # Use select function
+library(knitr) # Get markdown file
+library(tinytex) # Use TeX environment
+library(pander) # For pandering tables
+panderOptions("table.alignment.default","left")
+```
+# Data files
+The input data for this analysis is based on 3 files. These aren't the fully raw data collected on Qualtrics as it pre-processed to anonymize and delete columns that are not needed/allowed to publish. 
+
+## Final_ASA_Dutch_Round_1_First_Half_anonym.sav"
+The first survey was split in two to prevent fatigue. In the first group first 12 constructs were asked and the second group the last 12 constructs. The participants rated 44 and 46 questionnaire items each and 14 attention checks that all had to be correct. The participants had the option to not recommend their data, but this was of importance when creating the questionnaire. In this final assessment all data will be used. this file contains data of the first 12 constructs
+
+## Final_ASA_Dutch_Round_1_Second_Half_anonym.sav
+this file contains data from the last 12 constructs
+
+## Final_ASA_Dutch_Round_2_anonym.sav
+After the first round was performed 37 items needed to be retranslated as they had a low correlation value. We received 37 new translation as well as 27 alternative translations that needed to be evaluated. The results of that survey is saved in this file.
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+dataset <- read_sav("Final_ASA_Dutch_Round_1_First_Half_anonym.sav")
+dataset2 <- read_sav("Final_ASA_Dutch_Round_1_Second_Half_anonym.sav")
+dataset3 <- read_sav("Final_ASA_Dutch_Round_2_anonym.sav")
+#Importing data
+#"dataset" contains ASA question items from the first 12 constructs
+#"dataset2" contains ASA question items from the last 12 constructs
+```
+
+The data has some columns that are not necessary for this analysis, so we only select the attention checks and the questionnaire items of the survey.
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+dataset <- data.frame(select(dataset, AC_English_1:Q_ITEMS_438.0))
+dataset2 <- data.frame(select(dataset2, AC_English_1:Q42_442))
+dataset3 <- data.frame(select(dataset3, AC_Dutch_1:English_UAI3))
+#Selecting only relevant question items, which include attention checks 
+#and ASA questionnaire items
+```
+Here, we change the column names of such that the ASA questionnaire items are renamed according to which language they are in, and which construct they belong to. In the Legend Q2.txt you can find the questions that they belonged to.
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+#Here, all the column names are changed so that ASA questionnaire items are 
+#named according to their construct.
+colnames(dataset)[59:102] <- c("D_HLA1", "D_HLA2", "D_HLA3", "D_HLA4", "D_HLB1",
+                               "D_HLB2", "D_HLB3", "D_HLB4", "D_HLB5", "D_NA1", 
+                               "D_NA2", "D_NA3", "D_NA4", "D_NA5", "D_NB1", 
+                               "D_NB2", "D_NB3", "D_AAS1", "D_AAS2", "D_AAS3",
+                               "D_AU1", "D_AU2", "D_AU3", "D_PF1", "D_PF2", 
+                               "D_PF3", "D_AL1", "D_AL2", "D_R_AL3", "D_AL4", 
+                               "D_AL5", "D_AS1", "D_AS2", "D_AS3", "D_APP1", 
+                               "D_R_APP2", "D_APP3", "D_UAA1", "D_UAA2", 
+                               "D_R_UAA3", "D_R_AE1", "D_AE2", "D_AE3", 
+                               "D_R_AE4")
+#Changing columns of Dutch ASA question items in dataset
+
+colnames(dataset2)[61:106] <- c("D_UE1", "D_UE2", "D_UE3", "D_UT1", "D_UT2", 
+                                "D_UT3", "D_UAL1", "D_UAL2", "D_UAL3", "D_UAL4", 
+                                "D_UAL5", "D_UAL6", "D_AA1", "D_AA2", "D_AA3", 
+                                "D_R_AC1", "D_R_AC2", "D_R_AC3", "D_R_AC4", 
+                                "D_AI1", "D_AI2", "D_R_AI3", "D_AI4", "D_AT1", 
+                                "D_AT2", "D_R_AT3", "D_SP1", "D_SP2", "D_SP3", 
+                                "D_IIS1", "D_IIS2", "D_IIS3", "D_IIS4", 
+                                "D_AEI1", "D_AEI2", "D_R_AEI3", "D_AEI4", 
+                                "D_R_AEI5", "D_UEP1", "D_UEP2", "D_UEP3", 
+                                "D_UEP4", "D_UAI1", "D_UAI2", "D_UAI3", 
+                                "D_UAI4")
+#Changing columns of Dutch ASA question items in dataset2
+
+colnames(dataset)[8:51] <- c("HLA1", "HLA2", "HLA3", "HLA4", "HLB1", "HLB2", 
+                             "HLB3", "HLB4", "HLB5", "NA1", "NA2", "NA3", "NA4", 
+                             "NA5", "NB1", "NB2", "NB3", "AAS1", "AAS2", "AAS3", 
+                             "AU1", "AU2", "AU3", "PF1", "PF2", "PF3", "AL1", 
+                             "AL2", "R_AL3", "AL4", "AL5", "AS1", "AS2", "AS3", 
+                             "APP1", "R_APP2", "APP3", "UAA1", "UAA2", "R_UAA3", 
+                             "R_AE1", "AE2", "AE3", "R_AE4")
+#Changing columns of English ASA question items in dataset
+
+colnames(dataset2)[8:53] <- c("UE1", "UE2", "UE3", "UT1", "UT2", "UT3", "UAL1", 
+                              "UAL2", "UAL3", "UAL4", "UAL5", "UAL6", "AA1", 
+                              "AA2", "AA3", "R_AC1", "R_AC2", "R_AC3", "R_AC4", 
+                              "AI1", "AI2", "R_AI3", "AI4", "AT1", "AT2", 
+                              "R_AT3", "SP1", "SP2", "SP3", "IIS1", "IIS2", 
+                              "IIS3", "IIS4", "AEI1", "AEI2", "R_AEI3", "AEI4", 
+                              "R_AEI5", "UEP1", "UEP2", "UEP3", "UEP4", "UAI1", 
+                              "UAI2", "UAI3", "UAI4")
+#Changing columns of English ASA question items in dataset2
+```
+
+As the data got imported from Qualtrics not all cells had numeric values. So, we remove all text from the cells and make the text numerical. 
+```{r, message=FALSE, warning=TRUE, echo=TRUE}
+dataset <- as.data.frame(lapply(dataset[1:102], 
+                              function(y) as.numeric(gsub('[a-zA-Z]', '', y))))
+dataset2 <- as.data.frame(lapply(dataset2[1:106], 
+                              function(y) as.numeric(gsub('[a-zA-Z]', '', y))))
+dataset3 <- as.data.frame(lapply(dataset3[1:115], 
+                              function(y) as.numeric(gsub('[a-zA-Z]', '', y))))
+#Transform the data to numeric representation
+```
+
+
+In this section we can omit the attention checks and only keep the questionnaire items.
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+d1 <- as.data.frame(select(dataset, HLA1:R_AE4, D_HLA1:D_R_AE4))
+# Select scores of 44 English items and corresponding Dutch translations
+d2 <- as.data.frame(select(dataset2, UE1:UAI4, D_UE1:D_UAI4))
+# Select scores of 46 English items and corresponding Dutch translations
+d3 <- as.data.frame(select(dataset3, English_HLA1:English_UAI3, Dutch_HLA:Dutch_UAI3))
+# Select scores of 37 English items and corresponding Dutch translations
+```
+
+
+We manually checked which translation had the highest ICC value and picked them to create the variable with the best values. The chosen translations and their corresponding ICC value can be found in the same folder of this codebase under Best_ICC_and_translations.xlsx. To confirm these values we calculate the ICC values again from the datafiles. So we combine the necessary columns from each dataset.
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+d_total1 <- cbind(select(d1,HLA1), select(d3,English_HLA1), 
+                 select(d1,HLA3:HLB3), select(d3,English_HLB2),
+                 select(d1,HLB5:NA1), select(d3,English_NA1:English_NB1), 
+                 select(d1, NB2),  select(d3, English_NB3), select(d1, AAS1), 
+                 select(d3, English_AAS1:English_AAS2), select(d1, AU1:AU2), 
+                 select(d3, English_AU1), select(d1, PF1:PF3),
+                 select(d3, English_AL1), select(d1, AL2:AL5), 
+                 select(d3, English_AS1), select(d1, AS2), 
+                 select(d3, English_AS2), select(d1,APP1:R_UAA3), 
+                 select(d3,English_AE1:English_AE2), select(d1, AE3:R_AE4), 
+                 select(d2, UE1), select(d3,English_UE1), select(d2, UE3:UT1), 
+                 select(d3, English_UT1), select(d2, UT3:UAL1), 
+                 select(d3, English_UAL1), select(d2, UAL3:AA2), 
+                 select(d3, English_AA2), select(d2, R_AC1:AI4), 
+                 select(d3, English_AT1), select(d2, AT2:R_AT3), 
+                 select(d3, English_SP1), select(d2, SP2:SP3), 
+                 select(d3, English_IIS1: English_AEI1), 
+                 select(d2, AEI2:R_AEI5), 
+                 select(d3, English_UEP), select(d2, UEP2:UAI1), 
+                 select(d3, English_UAI1: English_UAI3))
+#select all English items from their correspoding datasets.
+
+
+d_total2 <- cbind(select(d1,D_HLA1), select(d3,Dutch_HLA), 
+                 select(d1,D_HLA3:D_HLB3), select(d3,Dutch_HLB2), 
+                 select(d1,D_HLB5:D_NA1), select(d3,Dutch_NA1), 
+                 select(d3,Dutch_NA2_Alt1), select(d3,Dutch_NA3), 
+                 select(d3,Dutch_NA4_Alt2:Dutch_NB1),select(d1, D_NB2), 
+                 select(d3,Dutch_NB3_Alt2) , select(d1, D_AAS1),  
+                 select(d3, Dutch_AAS1), select(d3, Dutch_AAS2_Alt4), 
+                 select(d1, D_AU1:D_AU2), select(d3, Dutch_AU1_Alt1), 
+                 select(d1, D_PF1:D_PF3), select(d3, Dutch_AL1_Alt1), 
+                 select(d1, D_AL2: D_AL5), select(d3, Dutch_AS1_Alt1), 
+                 select(d1, D_AS2), select(d3, Dutch_AS2_Alt3), 
+                 select(d1,D_APP1:D_R_UAA3), select(d3, Dutch_AE1_Alt1), 
+                 select(d3, Dutch_AE2), select(d1, D_AE3:D_R_AE4), 
+                 select(d2, D_UE1), select(d3, Dutch_UE1_Alt2), 
+                 select(d2, D_UE3:D_UT1), select(d3, Dutch_UT1_Alt1), 
+                 select(d2, D_UT3:D_UAL1), select(d3, Dutch_UAL1_Alt1), 
+                 select(d2, D_UAL3:D_AA2), select(d3, Dutch_AA2), 
+                 select(d2, D_R_AC1:D_AI4), select(d3, Dutch_AT1_Alt1), 
+                 select(d2, D_AT2:D_R_AT3), select(d3, Dutch_SP), 
+                 select(d2, D_SP2:D_SP3), select(d3, Dutch_IIS1_Alt2), 
+                 select(d3, Dutch_IIS2_Alt2), select(d3, Dutch_IIS3_Alt2), 
+                 select(d3, Dutch_IIS4: Dutch_AEI1_Alt1), 
+                 select(d2, D_AEI2:D_R_AEI5), select(d3, Dutch_UEP1_Alt1), 
+                 select(d2, D_UEP2:D_UAI1), 
+                 select(d3, Dutch_UAI1: Dutch_UAI3))
+#select all Dutch items from their correspoding datasets.
+
+d_total_Item <- cbind(d_total1, d_total2)
+# Combine evaluation scores of the best items across the 3 data files.
+
+```
+
+
+As the columns of the 2nd round didn't had the proper naming, we renamed all columns again. (most values contained xx_xx_Alt 1 as there were multiple translation, but we want only the proper tags in the end.)
+```{r, message=TRUE, warning=TRUE, echo=TRUE}
+colnames(d_total_Item)[1:180] <- c("HLA1", "HLA2", "HLA3", "HLA4", "HLB1", "HLB2", 
+                             "HLB3", "HLB4", "HLB5", "NA1", "NA2", "NA3", "NA4", 
+                             "NA5", "NB1", "NB2", "NB3", "AAS1", "AAS2", "AAS3", 
+                             "AU1", "AU2", "AU3", "PF1", "PF2", "PF3", "AL1", 
+                             "AL2", "R_AL3", "AL4", "AL5", "AS1", "AS2", "AS3", 
+                             "APP1", "R_APP2", "APP3", "UAA1", "UAA2", "R_UAA3", 
+                             "R_AE1", "AE2", "AE3", "R_AE4","UE1", "UE2", "UE3", 
+                             "UT1", "UT2", "UT3", "UAL1", "UAL2", "UAL3",
+                             "UAL4", "UAL5", "UAL6", "AA1", "AA2", "AA3", 
+                             "R_AC1", "R_AC2", "R_AC3", "R_AC4", "AI1", "AI2", 
+                             "R_AI3", "AI4", "AT1", "AT2", "R_AT3", "SP1", 
+                             "SP2", "SP3", "IIS1", "IIS2", "IIS3", "IIS4", 
+                             "AEI1", "AEI2", "R_AEI3", "AEI4", "R_AEI5", "UEP1",
+                             "UEP2", "UEP3", "UEP4", "UAI1", "UAI2", "UAI3",
+                             "UAI4", "D_HLA1", "D_HLA2", "D_HLA3", "D_HLA4", 
+                             "D_HLB1", "D_HLB2", "D_HLB3", "D_HLB4", "D_HLB5",
+                             "D_NA1", "D_NA2", "D_NA3", "D_NA4", "D_NA5",
+                             "D_NB1", "D_NB2", "D_NB3", "D_AAS1", "D_AAS2",
+                             "D_AAS3", "D_AU1", "D_AU2", "D_AU3", "D_PF1", 
+                             "D_PF2","D_PF3", "D_AL1", "D_AL2", "D_R_AL3",
+                             "D_AL4", "D_AL5", "D_AS1", "D_AS2", "D_AS3",
+                             "D_APP1", "D_R_APP2", "D_APP3", "D_UAA1",
+                             "D_UAA2", "D_R_UAA3", "D_R_AE1", "D_AE2", "D_AE3", 
+                             "D_R_AE4", "D_UE1", "D_UE2", "D_UE3", "D_UT1", 
+                             "D_UT2", "D_UT3", "D_UAL1", "D_UAL2", "D_UAL3", 
+                             "D_UAL4", "D_UAL5", "D_UAL6", "D_AA1", "D_AA2", 
+                             "D_AA3", "D_R_AC1", "D_R_AC2", "D_R_AC3", 
+                             "D_R_AC4", "D_AI1", "D_AI2", "D_R_AI3", "D_AI4", 
+                             "D_AT1", "D_AT2", "D_R_AT3", "D_SP1", "D_SP2", 
+                             "D_SP3", "D_IIS1", "D_IIS2", "D_IIS3", "D_IIS4",
+                             "D_AEI1", "D_AEI2", "D_R_AEI3", "D_AEI4", 
+                             "D_R_AEI5", "D_UEP1", "D_UEP2", "D_UEP3", 
+                             "D_UEP4", "D_UAI1", "D_UAI2", "D_UAI3", "D_UAI4")
+```
+
+we already prepare also the data we need for the construct level. As construct level icc is only valid if all questions from 1 construct are answered by the same person, we had to take almost all values from the First dataset(which was split in two). There was one construct where all questions were asked in round 2 and resulted in a higher ICC value. So the construct level data contains 1 construct (with the tag IIS) from Round 2 and the rest originate from round 1. The necessary columns were renamed to show the correct tags.
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+d_total1 <- cbind(select(d1,HLA1:R_AE4), select(d2,UE1:SP3), 
+                  select(d3, English_IIS1: English_IIS4), select(d2, AEI1:UAI4))
+#select all English items from their correspoding datasets.
+
+d_total2 <- cbind(select(d1,D_HLA1:D_R_AE4), select(d2,D_UE1:D_SP3), 
+                  select(d3, Dutch_IIS1_Alt2), select(d3, Dutch_IIS2_Alt2), 
+                  select(d3, Dutch_IIS3_Alt2), select(d3, Dutch_IIS4),
+                  select(d2, D_AEI1:D_UAI4))
+#select all Dutch items from their correspoding datasets.
+
+d_total_Construct <- cbind(d_total1, d_total2)
+#combine the items into 1.
+
+colnames(d_total_Construct)[74:77] <- c("IIS1", "IIS2", "IIS3", "IIS4")
+colnames(d_total_Construct)[164:167] <-c("D_IIS1", "D_IIS2", "D_IIS3", "D_IIS4")
+# rename the necessary columns.
+
+```
+
+
+All scores that have an R_ in front have to be reversed. This was  necessary for items like 'I don't like [the agent]' and 'I like [the agent]' as it will have opposite values so questions like 'i don't like [the agent]' are reversed.
+
+```{r, message=TRUE, warning=TRUE, echo=TRUE}
+for (i in grep("R_",colnames(d_total_Construct))){ 
+# Find column number of reversing-scoring items and translations
+  d_total_Construct[[i]][] <- d_total_Construct[[i]][]*(-1)
+  # Reverse scores of reverse-scoring items and translations
+}
+
+for (i in grep("R_",colnames(d_total_Item))){ 
+# Find column number of reversing-scoring items and translations
+  d_total_Item[[i]][] <- d_total_Item[[i]][]*(-1)
+  # Reverse scores of reverse-scoring items and translations
+}
+```
+
+# Analyses results reported in Section Results
+
+The results were reported in the results section of the paper. The mean score differences between the English and Dutch questionnaires are estimates for how well the translated questionnaire is compared to the original one. 95% credible interval of mean paired difference was calculated by Bayesian paired $t$-test, for item level, construct/dimension level, and the short version of the ASA questionnaire.
+
+## Model/function for variation calculation
+
+We used the Bayesian pairwise $t$-test to estimate the difference in ASAQ items score between the English and the Dutch version. First we define the function to return the necessary outputs from the Bayesian paired $t$-test.
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+
+getBAYES <-function(ID, ss_1, ss_2, B_output)
+# Function to obtain mean, and sd values of ss_1 (Dutch) 
+# and ss_2 (English), and relevant information from 
+# Bayesian t-test output stored in B_output, 
+# this is take from the 1 line for Bayes output 
+# which relates to the estimation of the means and mean difference 
+# ID is the identification number added in the return data 
+# frame row to identify an item or construct
+{ l <- data.frame(ID,
+                  mean_Dutch = mean(ss_1), # Mean of Dutch translation
+                  sd_Dutch = sd(ss_1), # Standard deviation of Dutch translation
+                  mean_English = mean(ss_2), # Mean of English item
+                  sd_English = sd(ss_2), # Standard deviation of English item
+                  mean_diff = as.numeric(B_output[["stats"]][1,1]), # Mean of mu difference
+                  sd_diff = as.numeric(B_output[["stats"]][1,2]), # Standard deviation
+                  HDIlo = as.numeric(B_output[["stats"]][1,5]), # HDIlo
+                  HDIup = as.numeric(B_output[["stats"]][1,6]), # HDIup
+                  n_eff = as.numeric(B_output[["stats"]][1,16]),# n_eff
+                  Rhat = as.numeric(B_output[["stats"]][1,15]), # Rhat
+                  P_posterior = max(B_output[["stats"]][1,8],   # %<comp
+                                    B_output[["stats"]][1,7]),  # %>comp
+                  zero_excl = ifelse((as.numeric(B_output[["stats"]][1,5])>0)   # HDIlo
+                                     | (as.numeric(B_output[["stats"]][1,6])<0),# HDIup
+                                     '*','') 
+#add “*” marker if the low bound of HDI is large than zero, 
+# or the upper bound is smaller than zero
+  )
+return(l)  # Line 1 in the bayes.t.test output of mu_diff
+}
+
+```
+
+## Mean score differences for 90 items 
+
+This chunk shows how we calculated the Variation of the 90 items of the English ASA questionnaire with the Dutch variant.
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+
+item_list <- data.frame(Item=character(),ID=double(),mean_Dutch=double(),
+                        sd_Dutch=double(),mean_English=double(),sd_English=double(),
+                        mean_diff=double(),sd_diff=double(),HDIlo=double(),
+                        HDIup=double(),zero_excl=character())
+# Initialize output of Items with credible bias indication
+
+set.seed(1) # Make sure that estimations of Bayesian analyses remain the same
+n <- ncol(d_total_Item) 
+# Numbers of all columns in d_total, i.e. English and Dutch scores combined
+Dutch_column_offset <- n /2 
+# Offset for the column position of the first Dutch ASAQ items
+
+for (i in 1:90) 
+# Go step by step to 90 ASA questionnaire items
+{
+  score_Dutch <- d_total_Item[,i+ Dutch_column_offset] # Dutch scores
+  score_English <- d_total_Item[,i] # English item scores
+  fit <- bayes.t.test(score_Dutch, score_English, paired = TRUE)
+  # conduct a Bayesian paired t-test on the Dutch and English score of ASAQ item
+  item_list <- rbind(item_list, getBAYES(i, score_Dutch, score_English, fit))
+  # store results from Bayesian analysis in a list to print later
+}
+
+# Print results
+item_list$Item = colnames(select(d_total_Item,HLA1:UAI4)) 
+# Add item name code
+pander(select(item_list,ID,mean_Dutch,sd_Dutch,mean_English,sd_English,Item), 
+       caption = "Items with credible bias indication (Part 1)")
+pander(select(item_list,ID,mean_diff,sd_diff,HDIlo,HDIup,Item), 
+       caption = "Items with credible bias indication (Part 2)")
+pander(select(item_list,ID,n_eff,Rhat,P_posterior,zero_excl,Item), 
+       caption = "Items with credible bias indication (Part 3)")
+
+# Calculate Grand mean information across the statistics obtained from 90 items
+Variable <- c("mean_Dutch","sd_Dutch","mean_English","sd_English",
+              "mean_diff","sd_diff","minimum_diff","maximum_diff",
+              "n_zero_excl","percent_zero_excl")
+# Define the names of the statistics
+
+Grand_mean <- c(mean(item_list$mean_Dutch),mean(item_list$sd_Dutch),
+                mean(item_list$mean_English),mean(item_list$sd_English),
+                mean(abs(item_list$mean_diff)),mean(item_list$sd_diff),
+                min(item_list$mean_diff),max(item_list$mean_diff),
+                sum(item_list$zero_excl=="*"),round(sum(item_list$zero_excl=="*")
+                /length(item_list$ID),digits=4)*100)
+# Calculate the grand means of mean_Dutch, sd_Dutch, mean_English, sd_English, 
+# sd_diff, grand mean of the absolute value of mean differences, number of items 
+# with credible bias indication, and percentage of these items
+
+# Print results
+GrandMean <- cbind(Variable, Grand_mean)
+pander(GrandMean, caption = "Grand mean of 90 items")
+
+```
+
+
+## Mean score differences for 24 constructs and related dimensions
+
+We first calculate the means of each construct/dimension and the we use in the same way as the item level comparison the getBayes function to obtain the mean differences for each construct. Furthermore, we again calculate the grand mean, standard deviation and range for the mean differences. 
+
+```{r, message=TRUE, warning=TRUE, echo=TRUE}
+Dutch_column_offset <- length(d_total_Construct)/2
+
+i <- which(names(d_total_Construct)%in%c("HLA1","HLB1","NA1","NB1","AAS1","AU1","PF1","AL1",
+          "AS1","APP1","UAA1","R_AE1","UE1","UT1","UAL1","AA1","R_AC1","AI1","AT1",
+          "SP1","IIS1","AEI1","UEP1","UAI1"))
+#vector with the indexes of the first item of all constructs.
+
+k <- c(ncol(select(d_total_Construct, HLA1:HLA4)),
+       ncol(select(d_total_Construct, HLB1:HLB5)),
+       ncol(select(d_total_Construct, NA1:NA5)),
+       ncol(select(d_total_Construct, NB1:NB3)),
+       ncol(select(d_total_Construct, AAS1:AAS3)),
+       ncol(select(d_total_Construct, AU1:AU3)),
+       ncol(select(d_total_Construct, PF1:PF3)),
+       ncol(select(d_total_Construct, AL1:AL5)),
+       ncol(select(d_total_Construct, AS1:AS3)),
+       ncol(select(d_total_Construct, APP1:APP3)),
+       ncol(select(d_total_Construct, UAA1:R_UAA3)),
+       ncol(select(d_total_Construct, R_AE1:R_AE4)),
+       ncol(select(d_total_Construct, UE1:UE3)),
+       ncol(select(d_total_Construct, UT1:UT3)),
+       ncol(select(d_total_Construct, UAL1:UAL6)),
+       ncol(select(d_total_Construct, AA1:AA3)),
+       ncol(select(d_total_Construct, R_AC1:R_AC4)),
+       ncol(select(d_total_Construct, AI1:AI4)),
+       ncol(select(d_total_Construct, AT1:R_AT3)),
+       ncol(select(d_total_Construct, SP1:SP3)),
+       ncol(select(d_total_Construct, IIS1:IIS4)),
+       ncol(select(d_total_Construct, AEI1:R_AEI5)),
+       ncol(select(d_total_Construct, UEP1:UEP4)),
+       ncol(select(d_total_Construct, UAI1:UAI4)))
+# 'k' is a vector with the number of questionnaire items of each 
+# construct/dimension
+
+h <- cbind.data.frame(i,k) 
+# Combine i and k into a data frame, whereby i indicates the column number 
+# of the first English item of a construct and k the total number of adjacent 
+# questionnaire items associated with the construct 
+
+con_list<-data.frame(Construct=character(),ID=double(),mean_Dutch=double(),
+                     sd_Dutch=double(),mean_English=double(),sd_English=double(),
+                     mean_diff=double(),sd_diff=double(),mean_diff=double(),
+                     HDIlo=double(),HDIup=double(),zero_excl=character())
+# Initialize output of Constructs/dimensions with credible bias indication
+
+n <- ncol(d_total_Construct) 
+# Numbers of all columns in d_total, i.e. English and DUtch scores combined
+Dutch_column_offset <- n /2 
+# Offset for the column position of the first Dutch ASAQ items
+
+for(p in 1:24) 
+# Go step by step to 24 constructs/dimensions
+{   
+  i = h[p,1] 
+  # The column with the first English ASAQ item of the construct/dimension        
+  j = i+ Dutch_column_offset 
+  # The column with the first Dutch ASAQ item of the construct/dimension   
+  k = h[p,2] # The number of columns/items of the construct/dimension
+  s_Dutch <- data.frame(d_total_Construct[,j:(j+k-1)]) # Select Dutch scores      
+  s_English <- data.frame(d_total_Construct[,i:(i+k-1)]) # Select English scores 
+  average_s_Dutch <- data.frame(rowMeans(s_Dutch))
+  # Dutch score means for each construct/dimension per participant
+  average_s_English <- data.frame(rowMeans(s_English))  
+  # English score means for each construct/dimension per participant 
+  colnames(average_s_Dutch) <- c("score") 
+  # Rename Dutch mean column      
+  colnames(average_s_English) <- c("score") 
+  # Rename English mean column
+  score <- data.frame(cbind(average_s_Dutch,average_s_English))
+  # Combine averaged scores of Dutch and English constructs/dimensions
+  score_Dutch <- score[,1]
+  # Select averaged scores of each Dutch construct/dimension,
+  # make sure data format is suitable for Bayesian paired t-test
+  score_English <- score[,2]
+  # Select averaged scores of each English construct/dimension,
+  # make sure data format is suitable for Bayesian paired t-test
+  fit <- bayes.t.test(score_Dutch,score_English, paired = TRUE)
+  # Conduct Bayesian t-test
+  con_list <- rbind(con_list,getBAYES(p,score_Dutch,score_English,fit))
+  # Call function 'getBAYES' to obtain relevant information 
+  # from Bayesian t-test output and add result to output list
+}
+
+# Print results
+con_list$Construct=c('HLA','HLB','NA','NB','AAS','AU','PF','AL','AS','APP',
+'UAA','AE','UE','UT','UAL','AA','AC','AI','AT','SP','IIS','AEI','UEP','UAI')
+# Add construct/dimension name code
+pander(select(con_list,ID,mean_Dutch,sd_Dutch,mean_English,sd_English,Construct), 
+       caption = "Constructs/dimensions with credible bias indication (Part 1)")
+pander(select(con_list,ID,mean_diff,sd_diff,HDIlo,HDIup,Construct), 
+       caption = "Constructs/dimensions with credible bias indication (Part 2)")
+pander(select(con_list,ID,n_eff,Rhat,P_posterior,zero_excl,Construct), 
+       caption = "Constructs/dimensions with credible bias indication (Part 3)")
+
+# Determine grand (abs) means
+Variable <- c("mean_Dutch","sd_Dutch","mean_English","sd_English",
+              "mean_diff","sd_diff","minimum_diff","maximum_diff",
+              "n_zero_excl","percent_zero_excl")
+Grand_mean <- c(mean(con_list$mean_Dutch),mean(con_list$sd_Dutch),
+                mean(con_list$mean_English),mean(con_list$sd_English),
+                mean(abs(con_list$mean_diff)),mean(con_list$sd_diff),
+                min(con_list$mean_diff),max(con_list$mean_diff),
+                sum(con_list$zero_excl=="*"),round(sum(con_list$zero_excl=="*")
+                /length(con_list$ID),digits=4)*100)
+GrandMean <- cbind(Variable, Grand_mean)
+# Calculate grand mean of mean_Dutch, sd_Dutch, mean_English, sd_English,
+# sd_diff, grand mean of the absolute value of mean differences, number of 
+# constructs/dimensions with credible bias indication, and percentage of these 
+# constructs/dimensions
+pander(GrandMean, caption = "Grand mean of 24 constructs/dimensions")
+
+```
+
+## Mean score differences between English and Chinese short version of ASA questionnaire
+
+In the same manner as the item and the construct/dimension level, we also calculate the mean score differences for the short representative questionnaire in the same manner as the previous sections. 
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+
+s_Dutch <- select(d_total_Item,D_HLA2,D_HLB5,D_NA4,D_NB3,D_AAS1,D_AU1,D_PF1,
+                  D_AL2,D_AS1,D_APP1,D_UAA1, D_R_AE1,D_UE2,D_UT3,D_UAL1,D_AA2,
+                  D_R_AC1,D_R_AI3,D_AT1,D_SP2,D_IIS2,D_R_AEI3,D_UEP3,D_UAI4)
+# Select Dutch versions of the 24 representative ASAQ items
+s_English <- select(d_total_Item,HLA2,HLB5,NA4,NB3,AAS1,AU1,PF1,AL2,AS1,APP1,
+                    UAA1,R_AE1,UE2,UT3,UAL1,AA2,R_AC1,R_AI3,AT1,SP2,IIS2,R_AEI3,
+                    UEP3,UAI4)
+# Select English versions of the 24 representative ASAQ items
+d_total_Short <- cbind(s_Dutch,s_English)
+# Combine Dutch and English scores
+n <- ncol(d_total_Short) # Numbers of all columns in d_total_Short
+Dutch_column_offset <- n /2
+
+short_list<-data.frame(Item=character(),ID=double(),mean_Dutch=double(),
+                     sd_Dutch=double(),mean_English=double(),sd_English=double(),
+                     mean_diff=double(),sd_diff=double(),HDIlo=double(), 
+                     HDIup=double(),zero_excl=character())
+# Initialize output of Representative items with credible bias indication
+
+
+for (i in 1:24)
+# Go step by step to 24 representative items of the ASA questionnaire
+{
+  score_Dutch <- as.numeric(d_total_Short[,i]) # Select Dutch scores
+  score_English <- as.numeric(d_total_Short[,i+ Dutch_column_offset]) # Select English scores
+  fit<- bayes.t.test(score_Dutch, score_English, paired = TRUE)
+  # conduct a Bayesian paired t-test on the Chinese and English score of ASAQ item
+  short_list <- rbind(short_list, getBAYES(i, score_Dutch, score_English, fit))
+  # store results from Bayesian analysis in a list to print later
+}
+
+# Print results
+short_list$Item <- c('HLA2','HLB5','NA4','NB3','AAS1','AU1','PF1','AL2',
+                  'AS1','APP1','UAA1','R_AE1','UE2','UT3','UAL1','AA2',
+                  'R_AC1','R_AI3','AT1','SP2','IIS2','R_AEI3','UEP3','UAI4')
+# Add item name code
+pander(select(short_list,ID,mean_Dutch,sd_Dutch,mean_English,sd_English,Item), 
+       caption = "Representative items with credible bias indication (Part 1)")
+pander(select(short_list,ID,mean_diff,sd_diff,HDIlo,HDIup,Item), 
+       caption = "Representative items with credible bias indication (Part 2)")
+pander(select(short_list,ID,n_eff,Rhat,P_posterior,zero_excl,Item), 
+       caption = "Representative items with credible bias indication (Part 3)")
+
+# Calculate grand (abs) mean results
+Variable <- c("mean_Dutch","sd_Dutch","mean_English","sd_English",
+              "mean_diff","sd_diff","minimum_diff","maximum_diff",
+              "n_zero_excl","percent_zero_excl")
+Grand_mean <- c(mean(short_list$mean_Dutch),mean(short_list$sd_Dutch),
+                mean(short_list$mean_English),mean(short_list$sd_English),
+                mean(abs(short_list$mean_diff)),mean(short_list$sd_diff),
+                min(short_list$mean_diff),max(short_list$mean_diff),
+                sum(short_list$zero_excl=="*"),round(sum(short_list$zero_excl=="*")
+                /length(short_list$ID),digits=4)*100)
+GrandMean <- cbind(Variable, Grand_mean)
+# Calculate grand mean of mean_Dutch, sd_Dutch, mean_English, sd_English 
+# sd_diff, grand mean of the absolute value of mean differences, number of 
+# representative items with credible bias indication, and percentage of these items
+pander(GrandMean, caption = "Grand mean of 24 representative items")
+
+```

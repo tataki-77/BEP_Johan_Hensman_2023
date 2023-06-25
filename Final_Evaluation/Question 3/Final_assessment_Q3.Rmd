@@ -1,0 +1,166 @@
+---
+title: 'Final assessment part 3.2: comparison between Dutch and English speakers using the ASA Questionnaire'
+author: "Johan Hensman"
+date: "21 June, 2023"
+output:
+  pdf_document:
+    includes:
+      in_header: header.tex
+    latex_engine: xelatex
+    fig_caption: yes
+    number_sections: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+This document presents statistical analyses of the comparison between Chinese and Dutch speakers perception of ASAs using the ASA questionnaire as reported in the paper. 
+Code based on Fengxiang Li with adaptations made to Dutch.
+
+
+We use the following packages:
+```{r, collapse=TRUE, results='hide', message=FALSE, warning=FALSE}
+
+library(foreign) # Open various data files
+library(nlme)    # Run multilevel linear models
+library(car)     # Package linear regression
+#install.packages("devtools")
+#devtools::install_github("rmcelreath/rethinking")
+library(rethinking) # Run ulam
+library(haven) # Use read_sav fuction
+library(dplyr) # Use select function
+library(knitr) # Get markdown file
+library(tinytex) # Use TeX environment
+library(rticles) # Use CTeX documents template
+library(pander) # For pandering tables
+panderOptions("table.alignment.default","left")
+
+```
+
+
+# Data file 
+## data_cultures.sav
+
+In Transform_raw_data.Rmd in this folder, we transformed the the different data files into 1 bigger datafile, where the data is stored in the long format. For more details look into Transform_raw_data.Rmd or Transform_raw_data.pdf.
+
+```{r, message=FALSE, warning=FALSE, echo=TRUE}
+
+data_culture <- data.frame(read_sav("data_cultures.sav"))
+```
+
+# Analyses results reported in Section Results
+## Comparison of Human-ASA Interaction between Different Cultural Backgrounds
+
+The results were reported in the section results. The analysis was based on human-ASA interaction evaluation of 30 Dutch speaker and 30 Chinese speakers on ASIMO. We compared human-ASA interaction between these two cultural background populations mentioned above. Two-level linear regression model was implemented to explore construct and dimension score differences between two sample groups. For the Bayesian analysis we used the rethinking package developed by Richard McElreath^[https://www.rdocumentation.org/packages/rethinking/versions/2.13].
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE, results='hide', error=FALSE} 
+
+cul_list <- data.frame(ConstructID=double(),mean_Chi=double(),sd_Chi=double(), 
+                       mean_Du=double(),sd_Du=double(),mean_diff=double(), 
+                       sd_diff=double(),lo2_5=double(), 
+                       hi97_5=double(),n_eff=double(),Rhat4=double(), 
+                       P_posterior=double(),zero_excl=character())
+#Initialize output list of Construct/dimension differences between two cultural
+#groups
+
+for(j in 1:24){
+  print(j)
+  d_c<-subset(data_culture, ConstructID==j, select=c(Culture, Rating))
+  # select scores data for ASAQ construct j
+
+  # Define the model we fit on the data. This is a multilevel model
+  # with culture as fixed effect
+  m <- ulam(
+    alist(
+      #Likelihood
+      Rating ~ dnorm(mu, sigma),
+      
+      #Linear model
+      mu <- a + c_cult*Culture,
+
+      #Fixed priors
+      a ~ dnorm(0, 2),
+      c_cult ~ dnorm(0, 1), 
+      sigma ~ dcauchy(0, 1)
+    ), data = d_c, iter = 50000, chains = 4, cores = 4, log_lik = TRUE,
+    control=list(adapt_delta=.99)
+  )
+
+  # Calculate posterior probability
+  post_samples <- extract.samples(m, 1e4) 
+  # Extract 10000 samples from the posterior distribution
+  c_cult <- as.numeric(post_samples$c_cult)
+  H0_post <- subset(c_cult, c_cult>0) 
+  # Select samples with positive posterior values (positive bias)
+  
+  H0_post_p <- length(H0_post)/1e4    
+  # Calculate probability of a positive bias
+  H1_post_p <- 1 - H0_post_p          
+  # Probability of a negative bias
+  
+  d_c_Chi <- subset(d_c, Culture == 0)
+  # Subset of only Chinese mother tongue sample
+
+  d_c_Du <- subset(d_c, Culture == 1)
+  # Subset of only Dutch mother tongue sample 
+
+  o <- precis(m,  depth=2, prob=.95)
+  l <- data.frame(ConstructID = j,
+                  mean_Du = mean(d_c_Du$Rating),
+                  sd_Du = sd(d_c_Du$Rating),
+                  mean_Chi = mean(d_c_Chi$Rating),
+                  sd_Chi = sd(d_c_Chi$Rating),
+                  mean_diff = as.numeric(o$mean[2]),
+                  sd_diff = as.numeric(o$sd[2]),
+                  lo2_5 = as.numeric(o$`2.5%`[2]), 
+                  hi97_5 = as.numeric(o$`97.5%`[2]),
+                  n_eff = as.numeric(o$n_eff[2]),
+                  Rhat4 = as.numeric(o$Rhat4[2]),
+                  P_posterior = max(H0_post_p,H1_post_p),
+                  zero_excl = ifelse((as.numeric(o$`2.5%`[2])>0)
+                                | (as.numeric(o$`97.5%`[2])<0),
+                                '*','')
+                  )
+  # Line 2 in the precis output, are the results related to c_cul coefficient
+  cul_list <- rbind(cul_list, l)
+  # Store results in a list to print later on
+
+}
+```
+
+The last step is the print the results of the model analysis.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+
+# Print results
+cul_list$Construct=c('HLA','HLB','NA','NB','AAS','AU','PF','AL','AS','APP',
+'UAA','AE','UE','UT','UAL','AA','AC','AI','AT','SP','IIS','AEI','UEP','UAI')
+# Add construct/dimension name code
+pander(select(cul_list,ConstructID,mean_Du,sd_Du,mean_Chi,sd_Chi,Construct), 
+       caption="Construct/dimension differences between two cultural groups (Part 1)")
+pander(select(cul_list,ConstructID,mean_diff,sd_diff,lo2_5,hi97_5,Construct), 
+       caption="Construct/dimension differences between two cultural groups (Part 2)")
+pander(select(cul_list,ConstructID,n_eff,Rhat4,P_posterior,zero_excl,Construct), 
+       caption="Construct/dimension differences between two cultural groups (Part 3)")
+
+# Print grand means
+Variable <- c("mean_Du","sd_Du","mean_Chi","sd_Chi","mean_diff","sd_diff",
+              "minimum_diff","maximum_diff","n_zero_excl","percent_zero_excl")
+Grand_mean <- c(mean(cul_list$mean_Du),mean(cul_list$sd_Du),
+                mean(cul_list$mean_Chi),mean(cul_list$sd_Chi),
+                mean(abs(cul_list$mean_diff)),mean(cul_list$sd_diff),
+                min(cul_list$mean_diff),max(cul_list$mean_diff),
+                sum(cul_list$zero_excl=="*"),round(sum(cul_list$zero_excl=="*")
+                /length(cul_list$ConstructID),digits=4)*100)
+GrandMean <- cbind(Variable, Grand_mean)
+# Calculate grand mean of mean_Chi, sd_Chi, mean_Eng, sd_Eng 
+# sd_diff, grand mean of the absolute value of mean differences, number of 
+# constructs/dimensions with credible bias indication, 
+# and percentage of these constructs/dimensions
+pander(GrandMean, caption = "Grand mean of 24 constructs/dimensions between two cultural groups")
+
+```
